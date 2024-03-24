@@ -6,15 +6,18 @@ import (
 )
 
 func main() {
+	v1 := vector.Vec2{X: 1, Y: 2}
+	v2 := vector.Vec2{X: 2, Y: 4}
+	var v3 vector.Vec2
 
-	// v1 := vector.Vec2{1, 3}
-	v1:= vector.MakeVec2(1, 3)
-	v2 := vector.MakeVec2(2, 4)
-	v3 := vector.AddVec2(v1, v2)
+	fmt.Printf("v1=%v\n", v1)
+	fmt.Printf("v2=%v\n", v2)
+	fmt.Printf("v3=%v\n", v3)
 
-	v3.Negate()
-	
-	// fmt.Printf("v1 = %v, %v", v1.X, v1.Y)
-	// fmt.Printf("v2 = %v, %v", v2.X, v2.Y)
-	fmt.Printf("v3 = %v, %v", v3.X, v3.Y)
+	fmt.Printf("%v\n", vector.AddVec2(v1, v2))
+
+	fmt.Printf("Before calling Negate v1=%v\n", v1)
+	v1.Negate()
+	fmt.Printf("After calling Negate v1=%v\n", v1)
+
 }
