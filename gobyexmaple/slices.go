@@ -55,3 +55,5 @@ func main() {
 	}
 	fmt.Println("2d:", twoD)
 }
+
+//https://go.dev/blog/slices-intro
