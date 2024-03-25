@@ -26,7 +26,7 @@ func main() {
 	fmt.Println("Address of 'number':", &number)      // Outputs the memory address of 'number'
 	fmt.Println("Address held by 'ptr':", ptr)        // Outputs the address stored in 'ptr'
 	fmt.Println("Value of 'number' via 'ptr':", *ptr) // Accesses the value of 'number' through 'ptr'
-	
+
 	var a int = 20  // A normal integer variable
 	var p *int = &a // 'p' holds the address of 'a'
 
