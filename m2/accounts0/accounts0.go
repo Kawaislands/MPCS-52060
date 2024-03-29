@@ -34,9 +34,10 @@ func transfer(transaction *Transaction) {
 	amount := transaction.amount
 
 	//Perform the transfer
-	//Note: We are assuming the from.balance >= amount!
-	from.balance -= amount
-	to.balance += amount
+	if from.balance >= amount {
+		from.balance -= amount
+		to.balance += amount
+	}
 
 }
 
@@ -70,7 +71,7 @@ func forkJoin(context *SharedContext) {
 	 * In general you should basis this off some sequential threshold value.
 	 */
 	if len(context.transactions) <= threshold {
-		for i := 0; i < threshold; i++ {
+		for i := 0; i < len(context.transactions); i++ {
 			transaction := context.transactions[i]
 			transfer(transaction)
 		}

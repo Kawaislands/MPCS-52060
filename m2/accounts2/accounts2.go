@@ -25,34 +25,20 @@ type Transaction struct {
 type SharedContext struct {
 	transactions []*Transaction
 	group        *sync.WaitGroup
-	flag         *int64
 }
 
 // transfer executes a bank transaction
-func transfer(flag *int64, transaction *Transaction) {
+func transfer(transaction *Transaction) {
 
 	from := transaction.From
 	to := transaction.To
 	amount := transaction.amount
 
 	//Perform the transfer
-	for !atomic.CompareAndSwapInt64(flag, 0, 1) {
-	}
+	//Note: We are assuming the from.balance >= amount!
+	atomic.AddInt64(&(from.balance), -amount)
+	atomic.AddInt64(&(to.balance), amount)
 
-	if from.balance >= amount {
-		from.balance -= amount
-		to.balance += amount
-	}
-
-	atomic.StoreInt64(flag, 0)
-
-	/** Question: Why doesn't this work?
-
-	if from.balance >= amount {
-		atomic.AddInt64(&(from.balance), -amount)
-		atomic.AddInt64(&(to.balance), amount)
-	}
-	**/
 }
 
 // transferTask computes concurrent task where each goroutine
@@ -62,7 +48,7 @@ func transferTask(start, end int, context *SharedContext) {
 	for i := start; i < end; i++ {
 		//Retrieve transaction information
 		transaction := context.transactions[i]
-		transfer(context.flag, transaction)
+		transfer(transaction)
 	}
 	context.group.Done()
 
@@ -85,7 +71,7 @@ func forkJoin(context *SharedContext) {
 	 * In general you should basis this off some sequential threshold value.
 	 */
 	if len(context.transactions) <= threshold {
-		for i := 0; i < threshold; i++ {
+		for i := 0; i < len(context.transactions); i++ {
 			transaction := context.transactions[i]
 			from := transaction.From
 			to := transaction.To
@@ -135,8 +121,7 @@ func main() {
 	 * between the goroutines
 	 */
 	group := &sync.WaitGroup{}
-	var flag int64
-	context := &SharedContext{transactions, group, &flag}
+	context := &SharedContext{transactions, group}
 	forkJoin(context)
 
 	fmt.Println("Account1 Balance = $", account1.balance)
